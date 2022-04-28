@@ -443,11 +443,17 @@ if __name__ == "__main__":
             type=int,
             default=20,
             help="number of cumbersome functions")
+    parser.add_argument("-s", "--sorting",
+            type=str,
+            choices=["tottime", "cumtime"],
+            default="tottime",
+            help="profile entries sotring order")
     parser.add_argument("benchmark",
             nargs="?",
             choices=sorted(benchmarks))
     
     options = parser.parse_args()
+    name = 'unpack_sequence'
     profiler = Profile(builtins=options.builtins)
     profiler.enable()
 
@@ -458,7 +464,7 @@ if __name__ == "__main__":
         func = bench_all
 
     func(loops=400)
-    ps = Stats(profiler).sort_stats(SortKey.TIME)
+    ps = Stats(profiler).sort_stats(options.sorting)
     
     ps.print_stats(options.amount)
     ps.dump_stats("test.prof")

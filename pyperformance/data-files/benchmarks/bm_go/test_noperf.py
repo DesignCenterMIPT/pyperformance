@@ -462,6 +462,11 @@ if __name__ == "__main__":
             type=int,
             default=20,
             help="number of cumbersome functions")
+    parser.add_argument("-s", "--sorting", 
+            type=str,
+            choices=["tottime", "cumtime"],
+            default="tottime",
+            help="profile entries sotring order")
     args = parser.parse_args()
     
     profiler = Profile(builtins=args.builtins)
@@ -469,7 +474,7 @@ if __name__ == "__main__":
 
     versus_cpu()
     profiler.disable()
-    ps = Stats(profiler).sort_stats(SortKey.TIME)
+    ps = Stats(profiler).sort_stats(args.sorting)
     
     ps.print_stats(args.amount)
     ps.dump_stats("test.prof")

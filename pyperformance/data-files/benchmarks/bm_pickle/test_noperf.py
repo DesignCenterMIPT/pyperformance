@@ -254,6 +254,11 @@ if __name__ == "__main__":
             type=int,
             default=20,
             help="number of cumbersome functions")
+    parser.add_argument("-s", "--sorting", 
+            type=str,
+            choices=["tottime", "cumtime"],
+            default="tottime",
+            help="profile entries sotring order")
     parser.add_argument("--pure-python", 
             action="store_true",
             help="Use the C version of pickle.")
@@ -266,17 +271,7 @@ if __name__ == "__main__":
 
     options = parser.parse_args()
     
-    parser = ArgumentParser()
-    parser.add_argument("-b", "--builtins",
-            action="store_false",
-            help="option for cProfile.Profile() class")
-    parser.add_argument("-a", "--amount",
-            type=int,
-            default=20,
-            help="number of cumbersome functions")
-    args = parser.parse_args()
-
-    profiler = Profile(builtins=args.builtins)
+    profiler = Profile(builtins=options.builtins)
     profiler.enable()
 
     if not (options.pure_python or IS_PYPY):
@@ -298,8 +293,8 @@ if __name__ == "__main__":
         benchmark(inner_loops, pickle, options)
 
     profiler.disable()
-    ps = Stats(profiler).sort_stats(SortKey.TIME)
+    ps = Stats(profiler).sort_stats(options.sorting)
 
-    ps.print_stats(args.amount)
+    ps.print_stats(options.amount)
     ps.dump_stats("test.prof")
 

@@ -18,12 +18,18 @@ if __name__ == "__main__":
             type=int,
             default=20,
             help="number of cumbersome functions")
+    parser.add_argument("-s", "--sorting", 
+            type=str,
+            choices=["tottime", "cumtime"],
+            default="tottime",
+            help="profile entries sotring order")
     parser.add_argument("--no-site",
             action="store_true")
     parser.add_argument("--exit",
             action="store_true")
 
     args = parser.parse_args()
+    name = 'python_startup'
     
     profiler = Profile(builtins=args.builtins)
     profiler.enable()
@@ -44,7 +50,7 @@ if __name__ == "__main__":
     subprocess.run(command)
     profiler.disable()
     profiler.dump_stats("test.prof")
-    ps = Stats(profiler).sort_stats(SortKey.TIME)
+    ps = Stats(profiler).sort_stats(args.sorting)
     
     ps.print_stats(args.amount)
     ps.dump_stats("test.prof")
